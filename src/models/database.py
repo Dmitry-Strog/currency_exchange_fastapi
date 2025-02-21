@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from models.config import settings
+from src.models.config import settings
 
 
 DATABASE_URL = settings.database_url_asyncpg
