@@ -6,7 +6,7 @@ from fastapi import Path, Form, status, Depends, APIRouter
 
 from src.services.exchange_service import ExchangeService
 
-from src.depedencies import exchange_service_depends
+from src.dependencies import exchange_service_depends
 from src.models.session_maker import SessionDep, TransactionSessionDep
 from src.schemas import (
     ExchangeRateSchemas,

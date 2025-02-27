@@ -3,7 +3,7 @@ from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Path, Form, status, Depends, APIRouter
 
-from src.depedencies import currency_service_depends
+from src.dependencies import currency_service_depends
 from src.services.currency_service import CurrencyService
 from src.models.session_maker import SessionDep, TransactionSessionDep
 from src.schemas import (
