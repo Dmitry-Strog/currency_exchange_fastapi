@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from src.exeptions import (
+from src.exceptions import (
     CurrencyNotFoundError,
     CurrencyCodeAlreadyExistsError,
     ExchangeRateNotFoundError,
