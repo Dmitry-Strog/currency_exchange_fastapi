@@ -48,7 +48,7 @@ class ExchangeService:
         exchange_record = await self.exchange_repo.find_one_or_none(
             session=session, filters=validated_schema
         )
-        logger.info(f"Запрос на валюты {exchange_record}")
+        logger.info(f"Запрос на пару валют: {exchange_record}")
         if exchange_record is None:
             raise ExchangeRateNotFoundError
         return ExchangeRateSchemas.model_validate(exchange_record)

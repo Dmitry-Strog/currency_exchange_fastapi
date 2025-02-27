@@ -48,3 +48,17 @@ class ExchangeRateIDAddSchemas(BaseSchemas):
     base_currency_id: int
     target_currency_id: int
     rate: Decimal = Field(max_digits=9, decimal_places=6, ge=0)
+
+
+class ExchangeConvertAddSchemas(BaseSchemas):
+    base_currency: str = Field(min_length=3, max_length=3)
+    target_currency: str = Field(min_length=3, max_length=3)
+    amount: Decimal = Field(max_digits=100, decimal_places=6, ge=0)
+
+
+class ExchangeConvertOutSchemas(BaseSchemas):
+    base_currency: CurrencySchemas
+    target_currency: CurrencySchemas
+    rate: Decimal = Field(max_digits=9, decimal_places=6, ge=0)
+    amount: Decimal = Field(max_digits=100, decimal_places=6, ge=0)
+    converted_amount: Decimal = Field(max_digits=100, decimal_places=6, ge=0)

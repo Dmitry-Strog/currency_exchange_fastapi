@@ -9,6 +9,7 @@ from src.exceptions import (
     CurrencyNotFoundException,
     CurrencyPairMissingException,
     DatabaseUnavailableException,
+    CurrencyConversionError,
 )
 
 
@@ -45,8 +46,10 @@ def register_exception_handlers(app: FastAPI):
     ):
         return JSONResponse(status_code=404, content={"message": exc.message})
 
+    @app.exception_handler(CurrencyConversionError)
+    async def currency_conversion(request: Request, exc: CurrencyConversionError):
+        return JSONResponse(status_code=404, content={"message": exc.message})
+
     @app.exception_handler(DatabaseUnavailableException)
-    async def database_unavailable_(
-        request: Request, exc: DatabaseUnavailableException
-    ):
+    async def database_unavailable(request: Request, exc: DatabaseUnavailableException):
         return JSONResponse(status_code=500, content={"message": exc.message})

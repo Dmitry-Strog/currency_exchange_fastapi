@@ -43,6 +43,11 @@ class CurrencyPairMissingException(BaseCurrencyException):
         self.message = f"Валютная пара отсутствует в базе данных"
 
 
+class CurrencyConversionError(BaseCurrencyException):
+    def __init__(self):
+        self.message = f"Курс обмена для пары валют не найден"
+
+
 class DatabaseUnavailableException(BaseCurrencyException):
     def __init__(self):
         self.message = f"База данных недоступна"
