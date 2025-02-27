@@ -18,6 +18,7 @@ class CurrencyModel(Base):
     )
     target_rate: Mapped[list["ExchangeRateModel"]] = relationship(
         foreign_keys="ExchangeRateModel.target_currency_id",
+        lazy="selectin",
         back_populates="target_currency",
         cascade="all, delete-orphan",
     )
@@ -41,10 +42,13 @@ class ExchangeRateModel(Base):
     )
 
     base_currency: Mapped["CurrencyModel"] = relationship(
-        foreign_keys="ExchangeRateModel.base_currency_id", back_populates="base_rate"
+        foreign_keys="ExchangeRateModel.base_currency_id",
+        lazy="joined",
+        back_populates="base_rate",
     )
     target_currency: Mapped["CurrencyModel"] = relationship(
         foreign_keys="ExchangeRateModel.target_currency_id",
+        lazy="joined",
         back_populates="target_rate",
     )
 
