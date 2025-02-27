@@ -1,26 +1,14 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-from src.models.session_maker import SessionDep
-from src.repository.currency_repository_impl import CurrencyRepositoryImpl
-from src.schemas import CurrencySchemas, CurrencyCodeSchemas
+from src.routers.exeption_handler import register_exception_handlers
+from src.routers import currencies, exchange_rate
 
 
 app = FastAPI()
 
 
-@app.get("/currencies", summary="Получение списка валют")
-async def get_all_currency(session: AsyncSession = SessionDep) -> list[CurrencySchemas]:
-    currencies = await CurrencyRepositoryImpl.find_all_currency(session)
-    return currencies
+app.include_router(currencies.router)
+app.include_router(exchange_rate.router)
 
-
-@app.get("/currency/{code}", summary="Получение конкретной валюты")
-async def get_one_currency(
-    code: str, session: AsyncSession = SessionDep
-) -> CurrencySchemas:
-    currency = await CurrencyRepositoryImpl.find_one_or_none(
-        session, CurrencyCodeSchemas(code=code)
-    )
-    print(currency)
-    return currency
+register_exception_handlers(app)
