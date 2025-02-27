@@ -5,6 +5,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from src.models.database import async_session_maker
+from src.logger_config import logger
 
 
 class SessionMakerManager:
@@ -25,7 +26,7 @@ class SessionMakerManager:
             try:
                 yield session
             except Exception as e:
-                print(f"Ошибка при создании сессии базы данных: {e}")
+                logger.error(f"Ошибка при создании сессии базы данных: {e}")
                 raise
             finally:
                 await session.close()
@@ -40,7 +41,7 @@ class SessionMakerManager:
             await session.commit()
         except Exception as e:
             await session.rollback()
-            print(f"Ошибка транзакции: {e}")
+            logger.error(f"Ошибка транзакции: {e}")
             raise
 
     async def get_session(self) -> AsyncGenerator[AsyncSession, None]:
