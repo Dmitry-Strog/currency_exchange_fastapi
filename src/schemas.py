@@ -1,4 +1,7 @@
-from pydantic import BaseModel, ConfigDict
+from decimal import Decimal
+
+from fastapi import Form
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseSchemas(BaseModel):
@@ -13,12 +16,35 @@ class CurrencySchemas(BaseSchemas):
     sign: str
 
 
+class InCurrencySchemas(BaseSchemas):
+    code: str = Field(min_length=3, max_length=3)
+    fullname: str
+    sign: str
+
+
 class CurrencyCodeSchemas(BaseSchemas):
-    code: str
+    code: str = Field(min_length=3, max_length=3)
 
 
 class ExchangeRateSchemas(BaseSchemas):
     id: int
+    base_currency: CurrencySchemas
+    target_currency: CurrencySchemas
+    rate: Decimal
+
+
+class InExchangeRateSchemas(BaseSchemas):
+    base_currency: str = Field(min_length=3, max_length=3)
+    target_currency: str = Field(min_length=3, max_length=3)
+
+
+class ExchangeRateAddSchemas(BaseSchemas):
+    base_currency: str = Field(min_length=3, max_length=3)
+    target_currency: str = Field(min_length=3, max_length=3)
+    rate: Decimal = Field(max_digits=9, decimal_places=6, ge=0)
+
+
+class ExchangeRateIDAddSchemas(BaseSchemas):
     base_currency_id: int
     target_currency_id: int
-    rate: int
+    rate: Decimal = Field(max_digits=9, decimal_places=6, ge=0)
