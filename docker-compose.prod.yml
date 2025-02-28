@@ -34,7 +34,7 @@ services:
     ports:
       - 80:80
     depends_on:
-      - web
+      - backend
 
 volumes:
   postgres_data:
