@@ -1,4 +1,4 @@
-from sqlalchemy import DECIMAL, UniqueConstraint, CheckConstraint
+from sqlalchemy import DECIMAL, UniqueConstraint, CheckConstraint, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.models.database import Base, fk_int
 
@@ -6,9 +6,11 @@ from src.models.database import Base, fk_int
 class CurrencyModel(Base):
     __tablename__ = "currencies"
 
-    code: Mapped[str] = mapped_column(unique=True)
-    fullname: Mapped[str]
-    sign: Mapped[str]
+    code: Mapped[str] = mapped_column(
+        String(3), index=True, unique=True, nullable=False
+    )
+    fullname: Mapped[str] = mapped_column(String(50), nullable=False)
+    sign: Mapped[str] = mapped_column(String(1), nullable=False)
 
     base_rate: Mapped[list["ExchangeRateModel"]] = relationship(
         foreign_keys="ExchangeRateModel.base_currency_id",

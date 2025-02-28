@@ -10,6 +10,8 @@ from src.exceptions import (
     CurrencyPairMissingException,
     DatabaseUnavailableException,
     CurrencyConversionError,
+    MissingFormField,
+    DuplicateCurrencyPairException,
 )
 
 
@@ -48,6 +50,16 @@ def register_exception_handlers(app: FastAPI):
 
     @app.exception_handler(CurrencyConversionError)
     async def currency_conversion(request: Request, exc: CurrencyConversionError):
+        return JSONResponse(status_code=404, content={"message": exc.message})
+
+    @app.exception_handler(MissingFormField)
+    async def missing_form_field(request: Request, exc: MissingFormField):
+        return JSONResponse(status_code=404, content={"message": exc.message})
+
+    @app.exception_handler(DuplicateCurrencyPairException)
+    async def duplicate_currency_pair(
+        request: Request, exc: DuplicateCurrencyPairException
+    ):
         return JSONResponse(status_code=404, content={"message": exc.message})
 
     @app.exception_handler(DatabaseUnavailableException)

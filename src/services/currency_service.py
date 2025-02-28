@@ -4,9 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.exceptions import (
     CurrencyNotFoundError,
     CurrencyCodeAlreadyExistsError,
+    MissingFormField,
 )
 from src.repository.interface.currency_repository import CurrencyRepository
-from src.repository.interface.exchange_repository import ExchangeRepository
 from src.schemas import (
     CurrencySchemas,
     CurrencyCodeSchemas,
@@ -39,6 +39,8 @@ class CurrencyService:
     async def create_one_currency(
         self, currency: InCurrencySchemas, session: AsyncSession
     ) -> CurrencySchemas:
+        if not currency.sign or not currency.fullname:
+            raise MissingFormField
         try:
             new_currency = await self.currency_repo.create_one(
                 session=session, filters=currency

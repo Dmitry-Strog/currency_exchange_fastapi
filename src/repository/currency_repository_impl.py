@@ -2,7 +2,7 @@ from typing import Sequence
 
 from pydantic import BaseModel
 from sqlalchemy import select
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, InterfaceError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions import DatabaseUnavailableException
@@ -44,7 +44,7 @@ class CurrencyRepositoryImpl(CurrencyRepository):
         try:
             await session.flush()
             return currency_model
-        except Exception as e:
+        except InterfaceError as e:
             await session.rollback()
             logger.error(f"Ошибка при добавлении валюты: {e}")
             raise DatabaseUnavailableException

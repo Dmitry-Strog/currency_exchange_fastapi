@@ -8,9 +8,9 @@ class CurrencyNotFoundError(BaseCurrencyException):
         self.message = f"Валюта не найдена"
 
 
-# class MissingFormField(BaseCurrencyException):
-#     def __init__(self):
-#         self.message = f"Отсутствует нужное поле формы"
+class MissingFormField(BaseCurrencyException):
+    def __init__(self):
+        self.message = f"Отсутствует нужное поле формы"
 
 
 class CurrencyCodeAlreadyExistsError(BaseCurrencyException):
@@ -46,6 +46,11 @@ class CurrencyPairMissingException(BaseCurrencyException):
 class CurrencyConversionError(BaseCurrencyException):
     def __init__(self):
         self.message = f"Курс обмена для пары валют не найден"
+
+
+class DuplicateCurrencyPairException(BaseCurrencyException):
+    def __init__(self):
+        self.message = f"Базовая и целевая валюта не могут совпадать"
 
 
 class DatabaseUnavailableException(BaseCurrencyException):

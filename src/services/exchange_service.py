@@ -9,6 +9,7 @@ from src.exceptions import (
     ExchangeCodeAlreadyExistsError,
     CurrencyNotFoundException,
     CurrencyPairMissingException,
+    DuplicateCurrencyPairException,
 )
 from src.repository.interface.currency_repository import CurrencyRepository
 from src.repository.interface.exchange_repository import ExchangeRepository
@@ -66,6 +67,8 @@ class ExchangeService:
         )
         if base_currency is None or target_currency is None:
             raise CurrencyNotFoundException
+        if base_currency == target_currency:
+            raise DuplicateCurrencyPairException
 
         data = ExchangeRateIDAddSchemas(
             base_currency_id=base_currency.id,
