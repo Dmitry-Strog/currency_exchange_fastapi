@@ -36,7 +36,7 @@ async def get_all_exchange_rates(
     status_code=status.HTTP_200_OK,
 )
 async def get_one_exchange_rates(
-    code: Annotated[str, Path(min_length=6, max_length=6, example="USDRUB")],
+    code: Annotated[str, Path(min_length=6, max_length=6, examples="USDRUB")],
     session: AsyncSession = SessionDep,
     service: ExchangeService = Depends(exchange_service_depends),
 ) -> ExchangeRateSchemas:
@@ -69,7 +69,7 @@ async def add_exchange_rates(
     status_code=status.HTTP_200_OK,
 )
 async def update_exchange_rates(
-    currency_pair: Annotated[str, Path(min_length=6, max_length=6, example="USDRUB")],
+    currency_pair: Annotated[str, Path(min_length=6, max_length=6, examples="USDRUB")],
     rate: Annotated[Decimal, Form(max_digits=9, decimal_places=6, ge=0)],
     session: AsyncSession = TransactionSessionDep,
     service: ExchangeService = Depends(exchange_service_depends),

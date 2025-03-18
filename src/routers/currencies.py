@@ -33,7 +33,7 @@ async def get_all_currency(
     status_code=status.HTTP_200_OK,
 )
 async def get_one_currency(
-    code: Annotated[str, Path(min_length=3, max_length=3, example="RUB")],
+    code: Annotated[str, Path(min_length=3, max_length=3, examples="RUB")],
     session: AsyncSession = SessionDep,
     service: CurrencyService = Depends(currency_service_depends),
 ) -> CurrencySchemas:

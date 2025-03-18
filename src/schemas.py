@@ -5,7 +5,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseSchemas(BaseModel):
-    # from_attributes = True: это позволяет модели автоматически маппить атрибуты Python объектов на поля модели
     model_config = ConfigDict(from_attributes=True)
 
 

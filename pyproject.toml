@@ -17,6 +17,9 @@ loguru = "^0.7.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
+pytest = "^8.3.5"
+httpx = "^0.28.1"
+pytest-asyncio = "^0.25.3"
 
 [build-system]
 requires = ["poetry-core"]

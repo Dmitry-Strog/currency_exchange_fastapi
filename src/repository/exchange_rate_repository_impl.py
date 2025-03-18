@@ -1,10 +1,10 @@
 from typing import Sequence
 
 from pydantic import BaseModel
-from sqlalchemy import select, update
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import aliased, joinedload
+from sqlalchemy.orm import aliased
 
 from src.exceptions import DatabaseUnavailableException
 from src.models.models import ExchangeRateModel, CurrencyModel
@@ -62,6 +62,8 @@ class ExchangeRateRepositoryImpl(ExchangeRepository):
             await session.flush()
             await session.refresh(exchange_model)
             return exchange_model
+        except IntegrityError:
+            raise
         except Exception as e:
             await session.rollback()
             logger.error(f"Ошибка при добавлении парной валюты: {e}")

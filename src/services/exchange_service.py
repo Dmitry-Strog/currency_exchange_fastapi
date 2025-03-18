@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from asyncpg.exceptions import UniqueViolationError
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession

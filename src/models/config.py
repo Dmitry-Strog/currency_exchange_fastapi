@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     def database_url_asyncpg(self):
         return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
 
+    @property
+    def database_test_url_asyncpg(self):
+        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/test_my_database"
+
     model_config = SettingsConfigDict(env_file=".env")
 
 
