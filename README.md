@@ -21,8 +21,8 @@ git clone https://github.com/Dmitry-Strog/currency_exchange_fastapi.git
 POSTGRES_DB=mydatabase
 POSTGRES_USER=myuser
 POSTGRES_PASSWORD=mypassword
-HOST=db
-PORT=5432
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
 ```
 
 ### 4. Сборка проекта
