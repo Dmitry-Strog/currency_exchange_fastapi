@@ -1,14 +1,11 @@
-from decimal import Decimal
-
 import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from main import app
-from schemas import InCurrencySchemas, ExchangeRateAddSchemas
-from src.models.config import settings
-from src.models.session_maker import session_manager, SessionMakerManager
-from src.models.database import Base
+from src.models.models import Base
+from src.database.config import settings
+from src.database.session_maker import session_manager, SessionMakerManager
 
 
 engine_test = create_async_engine(settings.database_test_url_asyncpg, echo=False)

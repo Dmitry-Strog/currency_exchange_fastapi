@@ -1,6 +1,16 @@
-from sqlalchemy import DECIMAL, UniqueConstraint, CheckConstraint, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from src.models.database import Base, fk_int
+from typing import Annotated
+
+from sqlalchemy import DECIMAL, UniqueConstraint, CheckConstraint, String, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
+
+
+class Base(DeclarativeBase):
+    __abstract__ = True
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
+
+
+fk_int = Annotated[int, mapped_column(ForeignKey("currencies.id", ondelete="CASCADE"))]
 
 
 class CurrencyModel(Base):

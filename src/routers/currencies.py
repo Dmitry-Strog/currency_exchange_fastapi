@@ -3,9 +3,8 @@ from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Path, Form, status, Depends, APIRouter
 
-from src.dependencies import currency_service_depends
+from src.dependencies import get_currency_service, get_currency_service_with_transaction
 from src.services.currency_service import CurrencyService
-from src.models.session_maker import SessionDep, TransactionSessionDep
 from src.schemas import (
     CurrencySchemas,
     InCurrencySchemas,
@@ -20,10 +19,9 @@ router = APIRouter(tags=["currencies"])
     status_code=status.HTTP_200_OK,
 )
 async def get_all_currency(
-    session: AsyncSession = SessionDep,
-    service: CurrencyService = Depends(currency_service_depends),
+    service: CurrencyService = Depends(get_currency_service),
 ) -> list[CurrencySchemas]:
-    currencies = await service.find_all_currency(session=session)
+    currencies = await service.find_all_currency()
     return currencies
 
 
@@ -34,12 +32,9 @@ async def get_all_currency(
 )
 async def get_one_currency(
     code: Annotated[str, Path(min_length=3, max_length=3, examples="RUB")],
-    session: AsyncSession = SessionDep,
-    service: CurrencyService = Depends(currency_service_depends),
+    service: CurrencyService = Depends(get_currency_service),
 ) -> CurrencySchemas:
-    currency = await service.find_one_or_none_currency(
-        session=session, currency_code=code
-    )
+    currency = await service.find_one_or_none_currency(currency_code=code)
     return currency
 
 
@@ -50,9 +45,8 @@ async def get_one_currency(
 )
 async def add_one_currency(
     currency: Annotated[InCurrencySchemas, Form()],
-    session: AsyncSession = TransactionSessionDep,
-    service: CurrencyService = Depends(currency_service_depends),
+    service: CurrencyService = Depends(get_currency_service_with_transaction),
 ) -> CurrencySchemas:
 
-    currency = await service.create_one_currency(session=session, currency=currency)
+    currency = await service.create_one_currency(currency=currency)
     return currency

@@ -1,9 +1,7 @@
 from decimal import Decimal
 
-from asyncpg.exceptions import UniqueViolationError
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions import (
     ExchangeRateNotFoundError,
@@ -31,39 +29,33 @@ class ExchangeService:
         self.currency_repo = currency_repo
         self.exchange_repo = exchange_repo
 
-    async def find_all_exchange(
-        self, session: AsyncSession
-    ) -> list[ExchangeRateSchemas]:
-        exchange_sequence = await self.exchange_repo.find_all(session=session)
+    async def find_all_exchange(self) -> list[ExchangeRateSchemas]:
+        exchange_sequence = await self.exchange_repo.find_all()
         return [
             ExchangeRateSchemas.model_validate(exchange)
             for exchange in exchange_sequence
         ]
 
     async def find_one_or_none_exchange(
-        self, currency_code: str, session: AsyncSession
+        self, currency_code: str
     ) -> ExchangeRateSchemas:
         base, target = currency_code[:3], currency_code[3:]
         validated_schema = InExchangeRateSchemas(
             base_currency=base, target_currency=target
         )
         exchange_record = await self.exchange_repo.find_one_or_none(
-            session=session, filters=validated_schema
+            filters=validated_schema
         )
         logger.info(f"Запрос на пару валют: {exchange_record}")
         if exchange_record is None:
             raise ExchangeRateNotFoundError
         return ExchangeRateSchemas.model_validate(exchange_record)
 
-    async def create_one_exchange(
-        self, session: AsyncSession, currency_exchange: ExchangeRateAddSchemas
-    ):
+    async def create_one_exchange(self, currency_exchange: ExchangeRateAddSchemas):
         base_currency = await self.currency_repo.find_one_or_none(
-            session=session,
             filters=CurrencyCodeSchemas(code=currency_exchange.base_currency),
         )
         target_currency = await self.currency_repo.find_one_or_none(
-            session=session,
             filters=CurrencyCodeSchemas(code=currency_exchange.target_currency),
         )
         if base_currency is None or target_currency is None:
@@ -77,9 +69,7 @@ class ExchangeService:
             rate=currency_exchange.rate,
         )
         try:
-            exchange_model = await self.exchange_repo.create_one(
-                session=session, filters=data
-            )
+            exchange_model = await self.exchange_repo.create_one(filters=data)
         except IntegrityError as e:
             logger.error(f"Ошибка при создании валютной пары {e}")
             raise ExchangeCodeAlreadyExistsError
@@ -87,15 +77,13 @@ class ExchangeService:
         return ExchangeRateSchemas.model_validate(exchange_model)
 
     async def update_exchange_pair(
-        self, currency_pair: str, rate: Decimal, session: AsyncSession
+        self, currency_pair: str, rate: Decimal
     ) -> ExchangeRateSchemas:
         base, target = currency_pair[:3], currency_pair[3:]
         validated_schema = ExchangeRateAddSchemas(
             base_currency=base, target_currency=target, rate=rate
         )
-        exchange_record = await self.exchange_repo.update(
-            session=session, filters=validated_schema
-        )
+        exchange_record = await self.exchange_repo.update(filters=validated_schema)
         try:
             schema = ExchangeRateSchemas.model_validate(exchange_record)
             return schema

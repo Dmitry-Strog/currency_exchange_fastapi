@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from src.models.database import async_session_maker
+from src.database.database import async_session_maker
 from src.logger_config import logger
 
 

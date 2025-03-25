@@ -10,28 +10,22 @@ class ConversionService:
     def __init__(self, exchange_service: ExchangeService):
         self.exchange_service = exchange_service
 
-    async def convert_rate(
-        self, session: AsyncSession, schema: ExchangeConvertAddSchemas
-    ):
+    async def convert_rate(self, schema: ExchangeConvertAddSchemas):
         try:
-            return await self._get_direct_rate(session=session, schema=schema)
+            return await self._get_direct_rate(schema=schema)
         except ExchangeRateNotFoundError:
             try:
-                return await self._get_reverse_rate(session=session, schema=schema)
+                return await self._get_reverse_rate(schema=schema)
             except ExchangeRateNotFoundError:
                 try:
-                    return await self._calculate_cross_rate(
-                        session=session, schema=schema
-                    )
+                    return await self._calculate_cross_rate(schema=schema)
                 except ExchangeRateNotFoundError:
                     logger.error(f"Конвертация не выполнена {schema}")
                     raise CurrencyConversionError
 
-    async def _get_direct_rate(
-        self, session: AsyncSession, schema: ExchangeConvertAddSchemas
-    ):
+    async def _get_direct_rate(self, schema: ExchangeConvertAddSchemas):
         exchange_rate = await self.exchange_service.find_one_or_none_exchange(
-            session=session, currency_code=schema.base_currency + schema.target_currency
+            currency_code=schema.base_currency + schema.target_currency
         )
         converted_amount = round(schema.amount * exchange_rate.rate, 2)
         return ExchangeConvertOutSchemas(
@@ -42,11 +36,9 @@ class ConversionService:
             converted_amount=converted_amount,
         )
 
-    async def _get_reverse_rate(
-        self, session: AsyncSession, schema: ExchangeConvertAddSchemas
-    ):
+    async def _get_reverse_rate(self, schema: ExchangeConvertAddSchemas):
         exchange_rate = await self.exchange_service.find_one_or_none_exchange(
-            session=session, currency_code=schema.target_currency + schema.base_currency
+            currency_code=schema.target_currency + schema.base_currency
         )
         converted_amount = round(schema.amount * (1 / exchange_rate.rate), 2)
         return ExchangeConvertOutSchemas(
@@ -57,16 +49,14 @@ class ConversionService:
             converted_amount=converted_amount,
         )
 
-    async def _calculate_cross_rate(
-        self, session: AsyncSession, schema: ExchangeConvertAddSchemas
-    ):
+    async def _calculate_cross_rate(self, schema: ExchangeConvertAddSchemas):
         exchange_usd_a = await self.exchange_service.find_one_or_none_exchange(
-            session=session, currency_code="USD" + schema.base_currency
+            currency_code="USD" + schema.base_currency
         )
         logger.debug(f"Найден курс для пары 'USD'/ {schema.base_currency}")
 
         exchange_usd_b = await self.exchange_service.find_one_or_none_exchange(
-            session=session, currency_code="USD" + schema.target_currency
+            currency_code="USD" + schema.target_currency
         )
         logger.debug(f"Найден курс для пары 'USD'/ {schema.target_currency}")
 
